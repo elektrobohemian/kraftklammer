@@ -1,5 +1,3 @@
-# kraftklammer
-
 <div align="center">
   <img src="./kraftklammer/Resources/logo.png" width="400">
 </div>

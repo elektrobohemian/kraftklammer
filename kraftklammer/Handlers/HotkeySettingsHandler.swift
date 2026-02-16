@@ -37,7 +37,8 @@ class HotkeySettingsHandler: NSObject, NSWindowDelegate {
             hotkeySettingsWindow?.isOpaque = false
             hotkeySettingsWindow?.delegate = self
         }
-
+        
+        
         let settingsView = HotkeySettingsView()
         hotkeySettingsWindow?.contentView = NSHostingView(rootView: settingsView)
         hotkeySettingsWindow?.makeKeyAndOrderFront(nil)

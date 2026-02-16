@@ -7,6 +7,9 @@
 //  Modifications by David Zellhöfer (2026):
 //  * preparations for localization
 //  * added documentation
+//  * added licensing information
+//  * made layout more consistent
+//  * added tabbed view
 //
 
 import SwiftUI
@@ -79,8 +82,12 @@ struct HotkeyRecorder: NSViewRepresentable {
             context.coordinator.stopRecording()
         }
     }
+    
 }
 
+
+
+// view definition of the settings dialog
 struct HotkeySettingsView: View {
     @State private var isRecordingHotkey = false
     @State private var currentHotkey: HotKeyConfiguration
@@ -88,19 +95,202 @@ struct HotkeySettingsView: View {
     @State private var showSuccessIndicator = false
     @Environment(\.colorScheme) var colorScheme
     
+    // enum to control the displayed tabs
+    enum TabsType: Int {
+        case settingsTab = 0, advancedTab
+    }
+    
+    @State private var selectedTab: TabsType = .settingsTab
+    
     init() {
         _currentHotkey = State(initialValue: SettingsService.shared.hotKeyConfiguration)
     }
     
     var body: some View {
-        VStack(spacing: 24) {
+        TabView(selection: $selectedTab) {
+            Tab("Settings", systemImage: "tray.and.arrow.down.fill",value: .settingsTab){
+                VStack(spacing: 24) {
+                    // Header
+                    VStack(spacing: 8) {
+                        Image(systemName: "keyboard")
+                            .font(.system(size: 36))
+                            .foregroundStyle(.blue)
+                        
+                        Text("Keyboard Shortcuts")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.top, 16)
+                    
+                    Divider()
+                    
+                    // Current hotkey display
+                    VStack(spacing: 16) {
+                        Text("Current Shortcut")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        HStack(spacing: 12) {
+                            
+                            Text(currentHotkey.description)
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.1))
+                                )
+                            
+                            if showSuccessIndicator {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .foregroundColor(.green)
+                                    .font(.system(size: 24))
+                                    .transition(.scale.combined(with: .opacity))
+                            }
+                            
+                            // daz
+                            /*
+                             Button("Reset to Default") {
+                             /*
+                              withAnimation {
+                              SettingsService.shared.resetHotKeyToDefault()
+                              currentHotkey = SettingsService.shared.hotKeyConfiguration
+                              HotKeysService.reregister()
+                              }
+                              */
+                             }
+                             .foregroundColor(.blue)
+                             //.padding(.vertical, 8)
+                             .padding(.horizontal, 16)
+                             */
+                            Button(action: {
+                                isRecordingHotkey = true
+                            }) {
+                                HStack {
+                                    Image(systemName: isRecordingHotkey ? "keyboard" : "record.circle")
+                                    Text(isRecordingHotkey ? "Listening for key press..." : "Record New Shortcut")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .fill(isRecordingHotkey ? Color.orange : Color.blue)
+                                        .opacity(isRecordingHotkey ? 0.8 : 1)
+                                )
+                                .foregroundColor(.white)
+                                .animation(.easeOut(duration: 0.2), value: isRecordingHotkey)
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(isRecordingHotkey)
+                            
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .animation(.spring(response: 0.3), value: showSuccessIndicator)
+                    }
+                    .padding(.horizontal)
+                    
+                    // Action buttons
+                    VStack(spacing: 12) {
+                        HStack{
+                            Spacer()
+                            Button("Reset to Default") {
+                                withAnimation {
+                                    SettingsService.shared.resetHotKeyToDefault()
+                                    currentHotkey = SettingsService.shared.hotKeyConfiguration
+                                    HotKeysService.reregister()
+                                }
+                            }
+                            .foregroundColor(.blue)
+                            //.padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .disabled(isRecordingHotkey)
+                        }
+                    }
+                    //.padding(.horizontal)
+                    
+                    Spacer()
+                    
+                    // Tip text
+                    VStack(spacing: 10) {
+                        HStack(spacing: 10) {
+                            Image(systemName: "info.circle")
+                                .foregroundColor(.blue)
+                            Text("Tips for Keyboard Shortcuts")
+                                .font(.headline)
+                        }
+                        
+                        Text("The shortcut must include at least one modifier key (⌘, ⌥, ⌃, ⇧). Good shortcuts use combinations that don't conflict with system commands.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .fixedSize(horizontal: false, vertical: true)
+                        HStack(spacing: 10) {
+                            Image(systemName: "heart.rectangle.fill")
+                                .foregroundColor(.blue)
+                            Text("This Software is Open Source")
+                                .font(.headline)
+                        }
+                        Text("This software is available under the MIT license.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .fixedSize(horizontal: false, vertical: true)
+                        
+                        Button("See license...") {
+                            selectedTab = .advancedTab
+                            displayLicenses()
+                            withAnimation {
+                                // daz: to do
+                            }
+                        }
+                        .foregroundColor(.blue)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                    }
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(colorScheme == .dark ? Color(.darkGray).opacity(0.3) : Color.blue.opacity(0.05))
+                    )
+                    .padding(.horizontal)
+                    .padding(.bottom)
+                }
+                // modified height
+                .frame(width: 400, height: 520)
+                .background(
+                    HotkeyRecorder(isRecording: $isRecordingHotkey) { keyCode, modifiers in
+                        handleKeyRecorded(keyCode: keyCode, modifiers: modifiers)
+                    }
+                )
+                .alert("Invalid Shortcut", isPresented: $showInvalidHotkeyAlert) {
+                    Button("OK", role: .cancel) {}
+                } message: {
+                    Text("The keyboard shortcut must include at least one modifier key (⌘, ⌥, ⌃, ⇧)")
+                }
+            }
+            Tab("Advanced", systemImage: "tray.and.arrow.down.fill",value: .advancedTab){
+                AdvancedTabView()
+            }
+        }
+        //.tabViewStyle(.sidebarAdaptable)
+        
+    }
+    // view body end
+    
+    /*
+     * Contents of the advanced tab view
+     */
+    private func AdvancedTabView() -> some View {
+        return VStack(spacing: 24) {
             // Header
             VStack(spacing: 8) {
-                Image(systemName: "keyboard")
+                Image(systemName: "info.circle.fill")
                     .font(.system(size: 36))
                     .foregroundStyle(.blue)
                 
-                Text("Keyboard Shortcuts")
+                Text("License Information")
                     .font(.title2)
                     .fontWeight(.semibold)
             }
@@ -108,127 +298,14 @@ struct HotkeySettingsView: View {
             
             Divider()
             
-            // Current hotkey display
-            VStack(spacing: 16) {
-                Text("Current Shortcut")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                
-                HStack(spacing: 12) {
-                  
-                    Text(currentHotkey.description)
-                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(colorScheme == .dark ? Color.gray.opacity(0.2) : Color.gray.opacity(0.1))
-                        )
-                    
-                    if showSuccessIndicator {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                            .font(.system(size: 24))
-                            .transition(.scale.combined(with: .opacity))
-                    }
-                    
-                    // daz
-                    Button("Reset to Default") {
-                        /*
-                        withAnimation {
-                            SettingsService.shared.resetHotKeyToDefault()
-                            currentHotkey = SettingsService.shared.hotKeyConfiguration
-                            HotKeysService.reregister()
-                        }
-                         */
-                    }
-                    .foregroundColor(.blue)
-                    //.padding(.vertical, 8)
-                    .padding(.horizontal, 16)
-                    
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .animation(.spring(response: 0.3), value: showSuccessIndicator)
-            }
-            .padding(.horizontal)
-            
-            // Action buttons
-            VStack(spacing: 12) {
-                Button(action: {
-                    isRecordingHotkey = true
-                }) {
-                    HStack {
-                        Image(systemName: isRecordingHotkey ? "keyboard" : "record.circle")
-                        Text(isRecordingHotkey ? "Listening for key press..." : "Record New Shortcut")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(isRecordingHotkey ? Color.orange : Color.blue)
-                            .opacity(isRecordingHotkey ? 0.8 : 1)
-                    )
-                    .foregroundColor(.white)
-                    .animation(.easeOut(duration: 0.2), value: isRecordingHotkey)
-                }
-                .buttonStyle(.plain)
-                .disabled(isRecordingHotkey)
-                
-                Button("Reset to Default") {
-                    withAnimation {
-                        SettingsService.shared.resetHotKeyToDefault()
-                        currentHotkey = SettingsService.shared.hotKeyConfiguration
-                        HotKeysService.reregister()
-                    }
-                }
-                .foregroundColor(.blue)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .disabled(isRecordingHotkey)
-            }
-            .padding(.horizontal)
-            
-            Spacer()
-            
-            // Tip text
-            VStack(spacing: 10) {
+            ScrollView {
                 HStack(spacing: 10) {
-                    Image(systemName: "info.circle")
-                        .foregroundColor(.blue)
-                    Text("Tips for Keyboard Shortcuts")
-                        .font(.headline)
+                    Text(appLicenseText+"\n"+thirdPartyLicenseText)
+                    Spacer(minLength: 1) // force full width
                 }
-                
-                Text("The shortcut must include at least one modifier key (⌘, ⌥, ⌃, ⇧). Good shortcuts use combinations that don't conflict with system commands.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .fixedSize(horizontal: false, vertical: true)
-                HStack(spacing: 10) {
-                    Image(systemName: "heart.rectangle.fill")
-                        .foregroundColor(.blue)
-                    Text("This Software is Open Source")
-                        .font(.headline)
-                }
-                Button("See license...") {
-                    print(appLicenseText)
-                    withAnimation {
-                        // daz: to do
-                    }
-                }
-                .foregroundColor(.blue)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                
-            
-            Text("DAZ: See details.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-                .fixedSize(horizontal: false, vertical: true)
-        }
+            }
+            .frame(maxHeight: .infinity) // let the view span the max. height
+            //.padding(.all, 10)
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
@@ -236,17 +313,6 @@ struct HotkeySettingsView: View {
             )
             .padding(.horizontal)
             .padding(.bottom)
-        }
-        .frame(width: 400, height: 580)
-        .background(
-            HotkeyRecorder(isRecording: $isRecordingHotkey) { keyCode, modifiers in
-                handleKeyRecorded(keyCode: keyCode, modifiers: modifiers)
-            }
-        )
-        .alert("Invalid Shortcut", isPresented: $showInvalidHotkeyAlert) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text("The keyboard shortcut must include at least one modifier key (⌘, ⌥, ⌃, ⇧)")
         }
     }
     
@@ -272,8 +338,16 @@ struct HotkeySettingsView: View {
             showInvalidHotkeyAlert = true
         }
     }
+
+    
+    private func displayLicenses() {
+        //print(appLicenseText+"\n"+thirdPartyLicenseText)
+        selectedTab = .advancedTab
+    }
+    
+
 }
 
 #Preview {
     HotkeySettingsView()
-} 
+}

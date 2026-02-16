@@ -43,6 +43,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.backgroundColor = .clear
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.contentView = hostingController.view
+        
+        // daz
+        //Window("What's New", id: "whats-new") {
+        //    Text("New in this version…")
+        //}
+        // daz
+        
 
         setupStatusBarItem()
         hotkeyHandler = HotkeySettingsHandler(panel: panel)
@@ -82,8 +89,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = statusItem.button {
             // set icon for status bar
             // systenSymbolName values can only be determined by using Apple's SF Symbols app that can be downoaded from https://developer.apple.com/sf-symbols/
-            //button.image = NSImage(systemSymbolName: "heart.text.clipboard.fill", accessibilityDescription: nil)
+            // we will use a different status bar icon if we are running in debug mode to facilitate visual discrimination
+            #if DEBUG
+            button.image = NSImage(systemSymbolName: "heart.text.clipboard.fill", accessibilityDescription: nil)
+            #else
+            // No debugging information in release build
             button.image = NSImage(named: "StatusBarIcon_Placeholder")
+            #endif
         }
         let menu = NSMenu()
 

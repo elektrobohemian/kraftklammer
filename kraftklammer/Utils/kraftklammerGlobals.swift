@@ -40,8 +40,15 @@ SOFTWARE.
 """
 
 let thirdPartyLicenseText: String = """
+* * * * * * * * * * * * * * *
+*                     
+* Other Contributions 
+*                     
+* * * * * * * * * * * * * * *
+
 Clipboard Manager
-------------------------------------------------------------------------------------------
+----------------------
+
 This software contains files, code, and/or documentation from Luca Nardelli whose official
 website is located at:
 
