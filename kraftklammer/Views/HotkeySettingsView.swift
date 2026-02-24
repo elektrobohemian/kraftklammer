@@ -105,9 +105,10 @@ struct HotkeySettingsView: View {
     init() {
         _currentHotkey = State(initialValue: SettingsService.shared.hotKeyConfiguration)
     }
-    
+    //MARK: Define body
     var body: some View {
         TabView(selection: $selectedTab) {
+            //TODO: migrate to separate function for better overview
             Tab("Settings", systemImage: "tray.and.arrow.down.fill",value: .settingsTab){
                 VStack(spacing: 24) {
                     // Header
@@ -282,6 +283,7 @@ struct HotkeySettingsView: View {
     /*
      * Contents of the advanced tab view
      */
+    //FIXME: layout should be aligned with normal settings view
     private func AdvancedTabView() -> some View {
         return VStack(spacing: 24) {
             // Header
