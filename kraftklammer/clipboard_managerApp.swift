@@ -44,6 +44,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.contentView = hostingController.view
         
+        //TODO: Ensure that the needed permission are granted to the app
+        // "Accessibility" (aka "Bedienungshilfen)
+        IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
+        
         // daz
         //Window("What's New", id: "whats-new") {
         //    Text("New in this version…")

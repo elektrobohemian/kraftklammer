@@ -32,13 +32,16 @@ __TODO__
 
 ## Requirements 
 
-* __TODO__
+The original project could be built under macOS 15.x but active development fully transitioned to macOS 26.3 at the end of February 2026. Hence, the app might work with macOS 15.x but has not been tested there.
 
 ### Prerequisites
 
-__TODO__
+* An installation of XCode if you want to compile the source code.
+
 
 ### Project Building
+
+The build process relies only on XCode.
 
 __TODO__
 
@@ -46,8 +49,13 @@ __TODO__
 
 * support for dark mode ✔︎
 * native build for Apple Silicon ✔︎
+* fine control over various settings (history handling, display size etc.)
 * support Wake-on-LAN calls
 * support for direct calls of user-specific shell scripts, e.g. for shutting down remote servers
 
 ## License
 ``kraftklammer`` is available under the MIT license. See the [LICENSE](./LICENSE) file for more information.
+
+## Building Clipy in 2026
+
+__TODO__
