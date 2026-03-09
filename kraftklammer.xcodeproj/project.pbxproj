@@ -29,9 +29,22 @@
 		17095A672D95D93200F6967A /* kraftklammerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = kraftklammerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		634567E42F4F8FA800CBBD5D /* Exceptions for "kraftklammer" folder in "kraftklammer" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 17095A4B2D95D93000F6967A /* kraftklammer */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		17095A4E2D95D93000F6967A /* kraftklammer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				634567E42F4F8FA800CBBD5D /* Exceptions for "kraftklammer" folder in "kraftklammer" target */,
+			);
 			path = kraftklammer;
 			sourceTree = "<group>";
 		};
@@ -392,6 +405,7 @@
 				ENABLE_PREVIEWS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = kraftklammer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kraftklammer;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -424,6 +438,7 @@
 				ENABLE_PREVIEWS = YES;
 				GCC_OPTIMIZATION_LEVEL = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = kraftklammer/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = kraftklammer;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";

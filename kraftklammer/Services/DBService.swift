@@ -5,6 +5,9 @@
 //  Created by Luca Nardelli on 10/04/2019.
 //  Copyright © 2019 Luca Nardelli. All rights reserved.
 //
+//  Modifications by David Zellhöfer (2026):
+//  * added a function to clear all items: deleteAll()
+//
 
 import Foundation
 
@@ -65,6 +68,18 @@ final class DBService {
     static func deleteItem(_ index:Int) {
         deleteAttachment(items[index].id)
         items.remove(at: index)
+        filter()
+        save()
+    }
+    
+    // removes all items
+    static func deleteAll() {
+        var i=0
+        for item in items {
+            deleteAttachment(items[i].id)
+            i+=1
+        }
+        items.removeAll()
         filter()
         save()
     }

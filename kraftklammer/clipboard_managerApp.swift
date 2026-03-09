@@ -8,6 +8,7 @@
 //  * preparations for localization
 //  * added documentation
 //  * prepared menu for further development and made it consistent with OS standards
+//  * added history clearing
 //
 
 import SwiftUI
@@ -46,7 +47,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         //TODO: Ensure that the needed permission are granted to the app
         // "Accessibility" (aka "Bedienungshilfen)
-        IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
+        //IOHIDRequestAccess(kIOHIDRequestTypePostEvent)
+        
+
+        
         
         // daz
         //Window("What's New", id: "whats-new") {
@@ -61,6 +65,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         DBService.initialize()
         ClipboardService.watch()
     }
+    
+    
+    
     /*
      *  Displays the clipboard item list
      */
@@ -87,6 +94,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func showHotkeySettings() {
         hotkeyHandler.showHotkeySettings()
     }
+    
+    // deletes all items from history
+    @objc func deleteHistory() {
+        DBService.deleteAll()
+    }
 
     func setupStatusBarItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
@@ -104,7 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
 
         menu.addItem(NSMenuItem(title: String(localized:"Show items..."), action: #selector(show), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: String(localized:"Delete history..."), action:nil, keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: String(localized:"Delete history..."), action:#selector(deleteHistory), keyEquivalent: ""))
         menu.addItem(NSMenuItem.separator())
         menu.addItem(NSMenuItem(title: String(localized:"Settings..."), action: #selector(showHotkeySettings), keyEquivalent: ""))
         menu.addItem(NSMenuItem.separator())

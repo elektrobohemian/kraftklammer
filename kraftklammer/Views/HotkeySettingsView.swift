@@ -14,6 +14,7 @@
 
 import SwiftUI
 import Carbon
+import ApplicationServices
 
 struct HotkeyRecorder: NSViewRepresentable {
     @Binding var isRecording: Bool
@@ -205,6 +206,14 @@ struct HotkeySettingsView: View {
                             //.padding(.vertical, 8)
                             .padding(.horizontal, 16)
                             .disabled(isRecordingHotkey)
+                            }
+                        /*Button("Clear history..."){
+                            print("Clearing...\n\(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)")
+                            DBService.deleteAll()
+                        }*/
+                        Button("Get permissions..."){
+                            let got_permission=requestAccessibilityPermission()
+                            print("Sufficient accessibility permission: \(got_permission)")
                         }
                     }
                     //.padding(.horizontal)
@@ -232,6 +241,7 @@ struct HotkeySettingsView: View {
                             Text("This Software is Open Source")
                                 .font(.headline)
                         }
+                        
                         Text("This software is available under the MIT license.")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
@@ -341,6 +351,10 @@ struct HotkeySettingsView: View {
         }
     }
 
+    private func requestAccessibilityPermission() -> Bool {
+        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
+        return AXIsProcessTrustedWithOptions(options)
+    }
     
     private func displayLicenses() {
         //print(appLicenseText+"\n"+thirdPartyLicenseText)
