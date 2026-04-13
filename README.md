@@ -50,6 +50,7 @@ __TODO__
 * support for dark mode ✔︎
 * native build for Apple Silicon ✔︎
 * fine control over various settings (history handling, display size etc.)
+* time-based removal of passwords
 * support Wake-on-LAN calls
 * support for direct calls of user-specific shell scripts, e.g. for shutting down remote servers
 

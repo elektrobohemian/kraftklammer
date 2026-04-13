@@ -2,7 +2,13 @@
 //  SettingsService.swift
 //  clipboard-manager
 //
+//  This class implements the persistence of various connfiguration values set by the user
+//  depending on macOS' integrated UserDefaults.standard mechanism
+//
 //  Created by Luca Nardelli on 27/03/25.
+//
+//  Modifications by David Zellhöfer (2026):
+//  * improved documentation
 //
 
 import Foundation

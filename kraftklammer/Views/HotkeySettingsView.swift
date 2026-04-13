@@ -100,7 +100,7 @@ struct HotkeySettingsView: View {
     
     private let MAX_HISTORY_ENTRIES_DEFAULT: Int = 500
     private let MIN_HISTORY_ENTRIES_DEFAULT: Int = 10
-    @State private var maxHistoryEntries: Int = 10
+    @AppStorage("maxHistoryEntries") private var maxHistoryEntries: Int = 50
     
     // enum to control the displayed tabs
     enum TabsType: Int {
@@ -297,7 +297,7 @@ struct HotkeySettingsView: View {
         .tabViewStyle(.sidebarAdaptable)
         .onAppear {
             // setting up standard values is only possible when the view is appearing
-            maxHistoryEntries=MIN_HISTORY_ENTRIES_DEFAULT
+
         }
     }
     // view body end
@@ -325,15 +325,20 @@ struct HotkeySettingsView: View {
                 
                 // Current hotkey display
                 VStack(spacing: 16) {
-                    Text("Current Shortcut")
+                    Text("Advanced Settings")
                         .font(.headline)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     HStack(spacing: 12) {
-                        Text("Maximal number of entries:")
+                        Text("Max. number of entries:")
                         TextField("Ganzzahl", value: $maxHistoryEntries, format: .number)
                         Stepper("", value: $maxHistoryEntries, in: self.MIN_HISTORY_ENTRIES_DEFAULT...self.MAX_HISTORY_ENTRIES_DEFAULT, step: 1)
                             .labelsHidden()
+                            .onChange(of: maxHistoryEntries){
+                                // react on changes of the 'maxHistoryEntries' value
+                                // call DBService directly as it is not a SwiftUI component
+                                DBService.MAX_ENTRIES=maxHistoryEntries
+                            }
                     }
                 }
                 .padding(.horizontal)
@@ -358,7 +363,22 @@ struct HotkeySettingsView: View {
                 //.padding(.horizontal)
                 
                 Spacer()
-                
+                // Tip text
+                VStack(spacing: 10) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "info.circle")
+                            .foregroundColor(.blue)
+                        Text("All modifications will be saved automatically.")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .foregroundColor(.blue)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                }
                 
                 .padding(.horizontal)
                 .padding(.bottom)
@@ -367,57 +387,6 @@ struct HotkeySettingsView: View {
             .frame(width: 400, height: 550)
             
         }
-        // daz * * * * * * *
-        // Header
-        /*
-         VStack(spacing: 8) {
-         
-         }
-         .padding(.top, 16)
-         
-         
-         Divider()
-         
-         VStack(spacing: 16) {
-         HStack(spacing: 10) {
-         
-         
-         Spacer(minLength: 1) // force full width
-         }
-         }
-         //.frame(maxHeight: .infinity) // let the view span the max. height
-         //.padding(.all, 10)
-         .padding()
-         /*.background(
-          RoundedRectangle(cornerRadius: 12)
-          .fill(colorScheme == .dark ? Color(.darkGray).opacity(0.3) : Color.blue.opacity(0.05))
-          )*/
-         .padding(.horizontal)
-         //.padding(.bottom)
-         
-         // Action buttons
-         VStack(spacing: 12) {
-         HStack{
-         Spacer()
-         Button("Reset to Default") {
-         withAnimation {
-         SettingsService.shared.resetHotKeyToDefault()
-         currentHotkey = SettingsService.shared.hotKeyConfiguration
-         HotKeysService.reregister()
-         }
-         }
-         .foregroundColor(.blue)
-         //.padding(.vertical, 8)
-         .padding(.horizontal, 16)
-         .disabled(isRecordingHotkey)
-         }
-         }
-         .padding(.bottom)
-         }
-         .padding(.horizontal)
-         .padding(.bottom)
-         //.frame(width: 400, height: 550)
-         */
     }
     
     /*

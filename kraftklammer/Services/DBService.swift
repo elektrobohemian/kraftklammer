@@ -7,18 +7,21 @@
 //
 //  Modifications by David Zellhöfer (2026):
 //  * added a function to clear all items: deleteAll()
+//  * max. entries are now read from UserDefaults.standard and can be altered in the UI
 //
 
 // TODO: add encryption! even password are saved a raw text.
 
 import Foundation
 
+
 final class DBService {
     
     static var items: [ClipItem] = []
     static var filteredItems: [ClipItem] = []
     static var filter: String = ""
-    static let MAX_ENTRIES = 10000
+    //static let MAX_ENTRIES = 10000
+    static var MAX_ENTRIES = UserDefaults.standard.integer(forKey: "maxHistoryEntries")
     static let PREVIEW_SIZE = 256
     static var listener: () -> Void = {}
     
@@ -60,6 +63,9 @@ final class DBService {
         
         if items.count > MAX_ENTRIES {
             deleteAttachment(items[items.count - 1].id)
+#if DEBUG
+            print("[DEBUG] Limit of \(MAX_ENTRIES) entries exceeded. Entry will be removed: \(DBService.getItemValue(items[items.count - 1]))")
+#endif
             items.remove(at: items.count - 1)
         }
         filter()

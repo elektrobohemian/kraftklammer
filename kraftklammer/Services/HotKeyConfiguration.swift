@@ -11,7 +11,7 @@ struct HotKeyConfiguration: Codable {
     var modifiers: UInt32
     
     static var `default`: HotKeyConfiguration {
-        return HotKeyConfiguration(keyCode: 41, modifiers: UInt32(cmdKey)) // Default is Command + J (key code 41)
+        return HotKeyConfiguration(keyCode: 41, modifiers: UInt32(cmdKey)) // Default is Command + "ö"(DE) or ";"(EN) (key code 41)
     }
     
     var isValid: Bool {

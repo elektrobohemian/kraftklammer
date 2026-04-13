@@ -20,6 +20,12 @@ struct clipboard_managerApp: App {
     var body: some Scene {
         Settings {}
     }
+    
+    init() {
+            UserDefaults.standard.register(defaults: [
+                "maxHistoryEntries": 50
+            ])
+        }
 }
 
 
