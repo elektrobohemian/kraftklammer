@@ -9,6 +9,8 @@
 //  * added a function to clear all items: deleteAll()
 //
 
+// TODO: add encryption! even password are saved a raw text.
+
 import Foundation
 
 final class DBService {

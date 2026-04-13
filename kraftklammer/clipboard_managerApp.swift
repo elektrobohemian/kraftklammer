@@ -34,7 +34,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         hostingController = NSHostingController(rootView: contentView)
 
         panel = ClipWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 300, height: 400),
+            contentRect: NSRect(x: 0, y: 0, width: 350, height: 550),
             styleMask: [.nonactivatingPanel, .borderless],
             backing: .buffered,
             defer: false

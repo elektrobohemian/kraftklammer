@@ -5,6 +5,9 @@
 //  Created by Luca Nardelli on 10/04/2019.
 //  Copyright © 2019 Luca Nardelli. All rights reserved.
 //
+//  Modifications by David Zellhöfer (2026):
+//  * added support for application detection based on bundle information in order to react differently to each app causing a clipboard event
+//
 
 import Foundation
 import AppKit
@@ -20,6 +23,18 @@ final class ClipboardService {
                 lastChangeCount = actualChangeCount
                 if let value = pasteboard.string(forType: .string) {
                     DBService.addItem(value)
+                    
+                    // daz: detect which app pated to the clipboard
+                    let app = NSWorkspace.shared.frontmostApplication
+                    let bundleID=app?.bundleIdentifier ?? "unbekannt"
+                    print("Kopiert von: \(bundleID)")
+                    
+                    if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
+                        let bundle = Bundle(url: url)
+                        let name = bundle?.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+                               ?? bundle?.object(forInfoDictionaryKey: "CFBundleName") as? String
+                        print(name ?? "unbekannt")
+                    }
                 }
             }
         })

@@ -9,7 +9,8 @@
 //  * added documentation
 //  * added licensing information
 //  * made layout more consistent
-//  * added tabbed view
+//  * added tabbed view for advanced settings, license etc.
+//  * support for history entry limitation
 //
 
 import SwiftUI
@@ -90,15 +91,20 @@ struct HotkeyRecorder: NSViewRepresentable {
 
 // view definition of the settings dialog
 struct HotkeySettingsView: View {
+    
     @State private var isRecordingHotkey = false
     @State private var currentHotkey: HotKeyConfiguration
     @State private var showInvalidHotkeyAlert = false
     @State private var showSuccessIndicator = false
     @Environment(\.colorScheme) var colorScheme
     
+    private let MAX_HISTORY_ENTRIES_DEFAULT: Int = 500
+    private let MIN_HISTORY_ENTRIES_DEFAULT: Int = 10
+    @State private var maxHistoryEntries: Int = 10
+    
     // enum to control the displayed tabs
     enum TabsType: Int {
-        case settingsTab = 0, advancedTab
+        case settingsTab = 0, advancedTab, licenseTab
     }
     
     @State private var selectedTab: TabsType = .settingsTab
@@ -206,11 +212,11 @@ struct HotkeySettingsView: View {
                             //.padding(.vertical, 8)
                             .padding(.horizontal, 16)
                             .disabled(isRecordingHotkey)
-                            }
+                        }
                         /*Button("Clear history..."){
-                            print("Clearing...\n\(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)")
-                            DBService.deleteAll()
-                        }*/
+                         print("Clearing...\n\(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first)")
+                         DBService.deleteAll()
+                         }*/
                         Button("Get permissions..."){
                             let got_permission=requestAccessibilityPermission()
                             print("Sufficient accessibility permission: \(got_permission)")
@@ -250,7 +256,7 @@ struct HotkeySettingsView: View {
                             .fixedSize(horizontal: false, vertical: true)
                         
                         Button("See license...") {
-                            selectedTab = .advancedTab
+                            selectedTab = .licenseTab
                             displayLicenses()
                             withAnimation {
                                 // daz: to do
@@ -269,7 +275,7 @@ struct HotkeySettingsView: View {
                     .padding(.bottom)
                 }
                 // modified height
-                .frame(width: 400, height: 520)
+                .frame(width: 400, height: 550)
                 .background(
                     HotkeyRecorder(isRecording: $isRecordingHotkey) { keyCode, modifiers in
                         handleKeyRecorded(keyCode: keyCode, modifiers: modifiers)
@@ -284,9 +290,15 @@ struct HotkeySettingsView: View {
             Tab("Advanced", systemImage: "tray.and.arrow.down.fill",value: .advancedTab){
                 AdvancedTabView()
             }
+            Tab("License", systemImage: "tray.and.arrow.down.fill",value: .licenseTab){
+                LicenseTabView()
+            }
         }
-        //.tabViewStyle(.sidebarAdaptable)
-        
+        .tabViewStyle(.sidebarAdaptable)
+        .onAppear {
+            // setting up standard values is only possible when the view is appearing
+            maxHistoryEntries=MIN_HISTORY_ENTRIES_DEFAULT
+        }
     }
     // view body end
     
@@ -295,6 +307,124 @@ struct HotkeySettingsView: View {
      */
     //FIXME: layout should be aligned with normal settings view
     private func AdvancedTabView() -> some View {
+        return VStack(spacing: 24) {
+            VStack(spacing: 24) {
+                // Header
+                VStack(spacing: 8) {
+                    Image(systemName: "gearshape.fill")
+                        .font(.system(size: 36))
+                        .foregroundStyle(.blue)
+                    
+                    Text("Settting Details")
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                }
+                .padding(.top, 16)
+                
+                Divider()
+                
+                // Current hotkey display
+                VStack(spacing: 16) {
+                    Text("Current Shortcut")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    HStack(spacing: 12) {
+                        Text("Maximal number of entries:")
+                        TextField("Ganzzahl", value: $maxHistoryEntries, format: .number)
+                        Stepper("", value: $maxHistoryEntries, in: self.MIN_HISTORY_ENTRIES_DEFAULT...self.MAX_HISTORY_ENTRIES_DEFAULT, step: 1)
+                            .labelsHidden()
+                    }
+                }
+                .padding(.horizontal)
+                
+                // Action buttons
+                VStack(spacing: 12) {
+                    HStack{
+                        Spacer()
+                        Button("Save settings") {
+                            withAnimation {
+                                //SettingsService.shared.resetHotKeyToDefault()
+                                currentHotkey = SettingsService.shared.hotKeyConfiguration
+                                HotKeysService.reregister()
+                            }
+                        }
+                        .foregroundColor(.blue)
+                        //.padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .disabled(isRecordingHotkey)
+                    }
+                }
+                //.padding(.horizontal)
+                
+                Spacer()
+                
+                
+                .padding(.horizontal)
+                .padding(.bottom)
+            }
+            // modified height
+            .frame(width: 400, height: 550)
+            
+        }
+        // daz * * * * * * *
+        // Header
+        /*
+         VStack(spacing: 8) {
+         
+         }
+         .padding(.top, 16)
+         
+         
+         Divider()
+         
+         VStack(spacing: 16) {
+         HStack(spacing: 10) {
+         
+         
+         Spacer(minLength: 1) // force full width
+         }
+         }
+         //.frame(maxHeight: .infinity) // let the view span the max. height
+         //.padding(.all, 10)
+         .padding()
+         /*.background(
+          RoundedRectangle(cornerRadius: 12)
+          .fill(colorScheme == .dark ? Color(.darkGray).opacity(0.3) : Color.blue.opacity(0.05))
+          )*/
+         .padding(.horizontal)
+         //.padding(.bottom)
+         
+         // Action buttons
+         VStack(spacing: 12) {
+         HStack{
+         Spacer()
+         Button("Reset to Default") {
+         withAnimation {
+         SettingsService.shared.resetHotKeyToDefault()
+         currentHotkey = SettingsService.shared.hotKeyConfiguration
+         HotKeysService.reregister()
+         }
+         }
+         .foregroundColor(.blue)
+         //.padding(.vertical, 8)
+         .padding(.horizontal, 16)
+         .disabled(isRecordingHotkey)
+         }
+         }
+         .padding(.bottom)
+         }
+         .padding(.horizontal)
+         .padding(.bottom)
+         //.frame(width: 400, height: 550)
+         */
+    }
+    
+    /*
+     * Contents of the license tab view
+     */
+    //FIXME: layout should be aligned with normal settings view
+    private func LicenseTabView() -> some View {
         return VStack(spacing: 24) {
             // Header
             VStack(spacing: 8) {
@@ -326,6 +456,7 @@ struct HotkeySettingsView: View {
             .padding(.horizontal)
             .padding(.bottom)
         }
+        .frame(width: 400, height: 550)
     }
     
     private func handleKeyRecorded(keyCode: UInt32, modifiers: UInt32) {
@@ -350,7 +481,7 @@ struct HotkeySettingsView: View {
             showInvalidHotkeyAlert = true
         }
     }
-
+    
     private func requestAccessibilityPermission() -> Bool {
         let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue(): true] as CFDictionary
         return AXIsProcessTrustedWithOptions(options)
@@ -361,7 +492,7 @@ struct HotkeySettingsView: View {
         selectedTab = .advancedTab
     }
     
-
+    
 }
 
 #Preview {
