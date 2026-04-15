@@ -4,10 +4,7 @@
 
 <br>
 
-![CI](https://github.com/Clipy/Clipy/workflows/CI/badge.svg)
-[![Release version](https://img.shields.io/github/release/Clipy/Clipy.svg)](https://github.com/Clipy/Clipy/releases/latest)
-[![OpenCollective](https://opencollective.com/clipy/backers/badge.svg)](#backers)
-[![OpenCollective](https://opencollective.com/clipy/sponsors/badge.svg)](#sponsors)
+
 
 The clipboard mananger ``kraftklammer`` (German for "power paper clip") is based on a fork of [clipboard-manager](https://github.com/nardellil/clipboard-managery) originally created by [Luca Nardelli](https://github.com/nardellil) and released under a [MIT license](https://github.com/nardellil/clipboard-manager/blob/main/LICENSE). To acknowledge his work, ``kraftklammer``uses the [MIT license](./LICENSE) as well.
 
