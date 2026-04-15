@@ -16,6 +16,8 @@ struct ClipRow: View {
     let search: String
     let selected: Bool
     
+    //@State private var itemHits: item.hits
+    
     @State private var isHovering = false
     @State private var isHoveringMenu = false
 
@@ -33,7 +35,7 @@ struct ClipRow: View {
                     if isHovering {
                         Menu {
                             Button(role: .destructive) {
-                                DBService.deleteItem(index)
+                                PersistenceService.deleteItem(index)
                             } label: {
                                 Label("Elimina", systemImage: "trash").labelStyle(.titleAndIcon)
                         }
@@ -71,7 +73,7 @@ struct ClipRow: View {
             }
             
         }.onTapGesture {
-            ClipboardService.pasteItem(DBService.getItemValue(item))
+            ClipboardService.pasteItem(PersistenceService.getItemValue(item))
         }.onHover { hovering in
             withAnimation(.easeInOut(duration: 0.2)) {
                 isHovering = hovering

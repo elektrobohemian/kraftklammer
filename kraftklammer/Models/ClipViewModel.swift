@@ -12,13 +12,19 @@ class ClipsViewModel: ObservableObject {
 
     init() {
         // Imposta il listener di DBService per aggiornare i dati
-        DBService.listener = { [weak self] in
+        PersistenceService.listener = { [weak self] in
             DispatchQueue.main.async {
-                self?.clips = DBService.filteredItems
+                self?.clips = PersistenceService.filteredItems
             }
         }
 
         // Carica inizialmente i dati
-        self.clips = DBService.filteredItems
+        self.clips = PersistenceService.filteredItems
     }
+    
+    func refresh() {
+            clips = PersistenceService.filteredItems
+            objectWillChange.send()
+        }
+    
 }

@@ -7,6 +7,8 @@
 //
 //  Modifications by David Zellhöfer (2026):
 //  * added support for application detection based on bundle information in order to react differently to each app causing a clipboard event
+//  * watcher can now detect whether the clipboard has been changed by the app or something else in order to monitor usage properly
+//  * added documentation
 //
 
 import Foundation
@@ -14,20 +16,33 @@ import AppKit
 
 final class ClipboardService {
     
+    // allows to discover if the clipboard has been altered by the app itself
+    static var selfTriggerClipboardChange: Bool = false
+    
     static func watch() {
         let pasteboard = NSPasteboard.general;
         var lastChangeCount = pasteboard.changeCount;
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { timer in
             let actualChangeCount = pasteboard.changeCount
             if actualChangeCount != lastChangeCount {
+                //print("[DEBUG] ClipboardServie: change detected")
                 lastChangeCount = actualChangeCount
                 if let value = pasteboard.string(forType: .string) {
-                    DBService.addItem(value)
+                    if !selfTriggerClipboardChange{
+                        // if the clipboard has been altered by the app itself, we do not have to add an item;
+                        // otherwise it would reset the hits counter
+                        PersistenceService.addItem(value)
+                        
+                        
+                    }
+                    PersistenceService.filterSortItems()
+                    // reset the trigger when done updating
+                    selfTriggerClipboardChange = false
                     
-                    // daz: detect which app pated to the clipboard
+                    // daz: detect which app pasted to the clipboard
                     let app = NSWorkspace.shared.frontmostApplication
                     let bundleID=app?.bundleIdentifier ?? "unbekannt"
-                    print("Kopiert von: \(bundleID)")
+                    print("[DEBUG] Last active app: \(bundleID)")
                     
                     if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
                         let bundle = Bundle(url: url)
@@ -40,11 +55,14 @@ final class ClipboardService {
         })
     }
     
+    /// <#Description#>
+    /// - Parameter value: <#value description#>
     static func pasteItem(_ value: String) {
         /*guard isAccessibilityEnabled(isPrompt: false) else {
             showAccessibilityAuthenticationAlert()
             return
         }*/
+        selfTriggerClipboardChange=true
         let pasteboard = NSPasteboard.general;
         pasteboard.clearContents()
         pasteboard.setString(value, forType: .string)

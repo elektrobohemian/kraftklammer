@@ -1,5 +1,5 @@
 //
-//  SettingsView.swift
+//  HotkeySettingsView.swift
 //  clipboard-manager
 //
 //  Created by Luca Nardelli on 27/03/25.
@@ -337,7 +337,7 @@ struct HotkeySettingsView: View {
                             .onChange(of: maxHistoryEntries){
                                 // react on changes of the 'maxHistoryEntries' value
                                 // call DBService directly as it is not a SwiftUI component
-                                DBService.MAX_ENTRIES=maxHistoryEntries
+                                PersistenceService.MAX_ENTRIES=maxHistoryEntries
                             }
                     }
                 }

@@ -49,6 +49,8 @@ __TODO__
 
 * support for dark mode ✔︎
 * native build for Apple Silicon ✔︎
+* encrypted data storage for persistence ✔︎
+* sorting of clipboard history by usage and timestamp ✔︎
 * fine control over various settings (history handling, display size etc.)
 * time-based removal of passwords
 * support Wake-on-LAN calls

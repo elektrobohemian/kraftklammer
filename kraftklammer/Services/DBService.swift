@@ -8,6 +8,7 @@
 //  Modifications by David Zellhöfer (2026):
 //  * added a function to clear all items: deleteAll()
 //  * max. entries are now read from UserDefaults.standard and can be altered in the UI
+//  * monitoring of usage frequency
 //
 
 // TODO: add encryption! even password are saved a raw text.
@@ -34,6 +35,7 @@ final class DBService {
     static func getItemValue(_ row: Int) -> String {
         let item = filteredItems[row]
         if let value = getAttachment(item.id) {
+            print("[Debug] Attachment found for \(item.id)")
             return value
         }
         return item.value

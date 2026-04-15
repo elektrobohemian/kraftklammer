@@ -68,7 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupStatusBarItem()
         hotkeyHandler = HotkeySettingsHandler(panel: panel)
         HotKeysService.register() { self.show() }
-        DBService.initialize()
+        PersistenceService.initialize()
         ClipboardService.watch()
     }
     
@@ -103,7 +103,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     // deletes all items from history
     @objc func deleteHistory() {
-        DBService.deleteAll()
+        PersistenceService.deleteAll()
     }
 
     func setupStatusBarItem() {

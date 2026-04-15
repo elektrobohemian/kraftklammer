@@ -19,11 +19,12 @@ struct ContentView: View {
                 text in
                 selection = -1
                 searchText = text
-                DBService.filter(text: text)
+                PersistenceService.filterSortItems(searchTerm: text)
             }).focused($isSearchFieldFocused)
             ClipsList(clips: clipsModel.clips, searchText: searchText, onClipSelected: {_ in}, selection: selection)
         }.onAppear {
             isSearchFieldFocused = true
+            
         }.onKeyPress(.downArrow) {
             selection = min(selection + 1, clipsModel.clips.count - 1)
             return .handled
@@ -32,7 +33,7 @@ struct ContentView: View {
             return .handled
         }.onKeyPress(.return) {
             if (selection != -1) {
-                ClipboardService.pasteItem(DBService.getItemValue(selection))
+                ClipboardService.pasteItem(PersistenceService.getItemValue(selection))
             }
             return .handled
         }.onKeyPress(.escape) {
